@@ -26,4 +26,8 @@ Gem::Specification.new do |spec|
 
   spec.executables   = ["muskrat"]
   spec.require_paths = ["lib"]
+
+  spec.required_ruby_version = ">= 2.5.0"
+
+  spec.add_dependency "mqtt", "~> 0.5.0"
 end

@@ -1,0 +1,15 @@
+---
+:production:
+  :concurrency: 10
+  :subscriptions:
+  - :name: notifications
+    :ratio: 10
+  - :name: pings
+    :ratio: 10
+  :mqtt:
+    - :host: localhost
+      :post: 1833
+      :ssl: false
+      :cert_file: ''
+      :key_file: ''
+      :ca_file: ''

@@ -1,35 +1,32 @@
-require 'optparse'
-
 require 'muskrat'
+require 'muskrat/configurer'
+require 'muskrat/env'
 
 module Muskrat
   class CLI
     def parse(args=ARGV)
       populate_options(args)
+      @env = load_requireable_env
     end
+
 
     private
 
-    def populate_options(args)
-      options = parse_options(args)
-      puts options.inspect
+    def launch
     end
 
-    def parse_options(args, opts={})
-      parser = OptionParser.new do |o|
-        o.on "-C", "--config PATH", "path to yaml config file" do |arg|
-          opts[:config_file] = arg
-        end
-      end
+    def options
+      Muskrat.options
+    end
 
-      parser.banner = "Muskrat /options/"
-      parser.on_tail "-h", "--help", "Show Help" do
-        puts parser
-        exit 1
-      end
+    def populate_options(args)
+      options.merge!(Muskrat::Configurer.new(args).options)
+    end
 
-      parser.parse!(args)
-      opts
+    def load_requireable_env
+      env = Muskrat::Env.new(options)
+      env.load
+      env
     end
   end
 end
