@@ -12,14 +12,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Which dir?
-          command: pwd
-      - run:
-          name: ls
-          command: ls -la
-      - run:
           name: Install bundler
           command: gem install bundler -v '2.0.2'
+      - ruby/bundle-install
       - run:
           name: Run rspec tests
           command: bundle exec rake spec
