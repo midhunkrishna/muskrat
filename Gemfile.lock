@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    Muskrat (0.1.0)
+    Muskrat (0.1.0.pre)
       mqtt (~> 0.5.0)
 
 GEM
