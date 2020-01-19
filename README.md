@@ -2,6 +2,10 @@
 
 Under Active Development :rocket:
 
+## Ci Status
+
+[![CircleCi](https://circleci.com/gh/midhunkrishna/muskrat.svg?style=svg)](https://circleci.com/gh/midhunkrishna/muskrat)
+
 ## Installation
 
 Add this line to your application's Gemfile:
