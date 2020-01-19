@@ -1,11 +1,21 @@
+require 'pry-byebug'
 require_relative 'spec_helper'
 
 require 'muskrat/env'
 require 'rails'
 
 describe 'Muskrat::Env' do
+  before(:each) do
+    @muskrat_options = Muskrat.options
+    Muskrat.instance_variable_set(:@options, Muskrat::DEFAULTS)
+  end
+
+  after(:each) do
+    Muskrat.instance_variable_set(:@options, @muskrat_options)
+  end
+
   it 'sets application environment in env instance' do
-    env = Muskrat::Env.new({environment: 'staging'})
+    Muskrat::Env.new({environment: 'staging'})
     expect(ENV['RAILS_ENV']).to eq 'staging'
     expect(ENV['RACK_ENV']).to eq 'staging'
   end
@@ -48,14 +58,16 @@ describe 'Muskrat::Env' do
   context 'when requireable path is not given' do
     context 'when process directory is a rails app root' do
       it 'loads rails env from current directory' do
+        Muskrat.instance_variable_set(:@options, {})
         expect(Dir).to receive(:pwd).and_return('./spec/support/rails_dummy')
 
-        env = Muskrat::Env.new({environment: 'staging'})
+        env = Muskrat::Env.new(Muskrat.options.merge!({environment: 'staging'}))
         expect(env).to receive(:require).with('rails')
         expect(env).to receive(:require).with(/config\/environment/)
-        expect(env).to receive(:require).with('muskrat/rails_reloader')
+        expect(env).to receive(:require).with('muskrat/rails_reloader').and_call_original
 
         env.load
+        expect(Muskrat.options[:reloader]).to be_a Muskrat::RailsReloader
       end
     end
   end
