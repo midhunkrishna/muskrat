@@ -4,11 +4,11 @@
   :subscriptions:
   - :name: notifications
     :ratio: 10
-  - :name: pings
+  - :name: "heartbeat/#"
     :ratio: 10
   :mqtt:
     - :host: localhost
-      :post: 1833
+      :port: 1833
       :ssl: false
       :cert_file: ''
       :key_file: ''

@@ -1,4 +1,5 @@
-require "muskrat/version"
+require 'muskrat/version'
+require 'muskrat/subscriber'
 
 module Muskrat
   DEFAULTS = {

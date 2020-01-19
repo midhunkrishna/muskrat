@@ -20,7 +20,7 @@ module Muskrat
     end
 
     def populate_options(args)
-      options.merge!(Muskrat::Configurer.new(args).options)
+      options.merge!(Muskrat::Configurer.parse_from_cli(args))
     end
 
     def load_requireable_env

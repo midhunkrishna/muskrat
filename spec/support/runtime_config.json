@@ -1,0 +1,35 @@
+{
+    "subscriptions": [],
+    "concurrency": 10,
+    "config": {
+        "production": {
+            "concurrency": 10,
+            "subscriptions": [
+                {
+                    "name": "notifications",
+                    "ratio": 10
+                },
+                {
+                    "name": "heartbeat",
+                    "ratio": 10
+                }
+            ],
+            "mqtt": {
+                "host": "localhost",
+                "port": 1833
+            }
+        }
+    },
+    "subscriber_config": {
+        "notifications": [
+            {
+                "klass": "NotificationSubscriber"
+            }
+        ],
+        "heartbeat/#": [
+            {
+                "klass": "HeartBeatMonitor"
+            }
+        ]
+    }
+}

@@ -9,15 +9,31 @@ module Muskrat
 
     CONFIG_FILE_NOT_FOUND='Configuration file not found. Muskrat will fallback to default configurations'.freeze
 
-    def initialize(args)
+    def self.parse_from_cli(args)
       @options = parse_options(args)
       load_config(@options)
+      @options
     end
 
+    def self.reconcile_subscription(opts, subscription)
+      topics = Array(subscription[:topic]).map(&:to_sym)
+
+      config = opts[:subscriber_config].dup || {}
+
+      topics.each do | topic |
+        config[topic] ||= []
+
+        config[topic].push({
+          klass: subscription[:subscriber]
+        })
+      end
+
+      { subscriber_config: config }
+    end
 
     private
 
-    def parse_options(args, opts={})
+    private_class_method def self.parse_options(args, opts={})
       parser = OptionParser.new do |o|
         o.on "-C", "--config PATH[FILE]", "path to yaml config file" do |arg|
           opts[:config_file] = arg
@@ -42,7 +58,7 @@ module Muskrat
       opts
     end
 
-    def load_config(opts)
+    private_class_method def self.load_config(opts)
       file_path = opts[:config_file]
       if file_path && File.exist?(file_path)
         opts[:config] = YAML.load(File.read(file_path))
