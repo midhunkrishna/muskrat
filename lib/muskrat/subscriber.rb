@@ -1,24 +1,26 @@
-require 'muskrat'
-require 'muskrat/client'
-require 'muskrat/configurer'
+require "muskrat"
+require "muskrat/client"
+require "muskrat/configurer"
 
 module Muskrat
   module Subscriber
-    TOPIC_NOT_SPECIFIED='%{klass} not subscribed to any topic.'.freeze
+    TOPIC_NOT_SPECIFIED = "%{klass} not subscribed to any topic.".freeze
 
     module ClassMethods
       def publish(*args)
+        # publisher = Muskrat::Mqtt::Publisher.instance
+        # publisher.publish(topic, args, retain_or_not)
       end
 
       def subscribe(*args)
         topic = args.first&.[](:topic) || args.first&.[]("topic")
 
-        raise TOPIC_NOT_SPECIFIED % {klass: self.name} unless topic
+        raise TOPIC_NOT_SPECIFIED % {klass: name} unless topic
 
         Muskrat.options.merge!(
           Muskrat::Configurer.reconcile_subscription(
             Muskrat.options,
-            { subscriber: self.name, topic: topic }
+            {subscriber: name, topic: topic}
           )
         )
       end

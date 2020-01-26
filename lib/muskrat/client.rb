@@ -1,5 +1,5 @@
-require 'muskrat'
-require 'mqtt'
+require "muskrat"
+require "mqtt"
 
 module Muskrat
   class Client
@@ -21,8 +21,8 @@ module Muskrat
       end
 
       {
-        host: 'localhost',
-        post: 1833
+        host: "localhost",
+        post: 1833,
       }.merge(options)
     end
   end

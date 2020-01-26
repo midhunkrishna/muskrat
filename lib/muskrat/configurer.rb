@@ -1,13 +1,13 @@
-require 'optparse'
-require 'yaml'
+require "optparse"
+require "yaml"
 
-require 'muskrat/logger'
+require "muskrat/logger"
 
 module Muskrat
   class Configurer
     attr_reader :options
 
-    CONFIG_FILE_NOT_FOUND='Configuration file not found. Muskrat will fallback to default configurations'.freeze
+    CONFIG_FILE_NOT_FOUND = "Configuration file not found. Muskrat will fallback to default configurations".freeze
 
     def self.parse_from_cli(args)
       @options = parse_options(args)
@@ -20,21 +20,22 @@ module Muskrat
 
       config = opts[:subscriber_config].dup || {}
 
-      topics.each do | topic |
+      topics.each do |topic|
         config[topic] ||= []
 
         config[topic].push({
-          klass: subscription[:subscriber]
+          klass: subscription[:subscriber],
+          topic: topic.to_s,
         })
       end
 
-      { subscriber_config: config }
+      {subscriber_config: config}
     end
 
     private
 
-    private_class_method def self.parse_options(args, opts={})
-      parser = OptionParser.new do |o|
+    private_class_method def self.parse_options(args, opts = {})
+      parser = OptionParser.new { |o|
         o.on "-C", "--config PATH[FILE]", "path to yaml config file" do |arg|
           opts[:config_file] = arg
         end
@@ -46,7 +47,7 @@ module Muskrat
         o.on "-e", "--environment STR", "your application environment" do |arg|
           opts[:environment] = arg
         end
-      end
+      }
 
       parser.banner = "Muskrat /options/"
       parser.on_tail "-h", "--help", "Show Help" do
@@ -61,7 +62,7 @@ module Muskrat
     private_class_method def self.load_config(opts)
       file_path = opts[:config_file]
       if file_path && File.exist?(file_path)
-        opts[:config] = YAML.load(File.read(file_path))
+        opts[:config] = YAML.safe_load(File.read(file_path))
       else
         Muskrat::Logger.log(CONFIG_FILE_NOT_FOUND)
       end

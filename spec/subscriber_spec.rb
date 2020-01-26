@@ -24,7 +24,16 @@ describe 'Muskrat::Subscriber' do
   it 'sets subscription information in :subscriber_config' do
     recorded_require 'sample_subscribers/notification_subscriber'
     expect(Muskrat.options[:subscriber_config]).
-      to eq({ notifications: [{:klass=>"NotificationSubscriber"}] } )
+      to eq(
+        {
+          notifications: [
+            {
+              :klass=>"NotificationSubscriber",
+              :topic=>"notifications"
+            }
+          ]
+        }
+      )
 
     recorded_require 'sample_subscribers/event_subscriber'
 
@@ -32,12 +41,14 @@ describe 'Muskrat::Subscriber' do
       to eq({
         :notifications => [
           {
-            :klass=>"NotificationSubscriber"
+            :klass =>"NotificationSubscriber",
+            :topic =>"notifications"
           }
         ],
         "events/#".to_sym => [
           {
-            :klass=>"EventSubscriber"
+            :klass =>"EventSubscriber",
+            :topic => "events/#"
           }
         ]
       })
@@ -49,7 +60,8 @@ describe 'Muskrat::Subscriber' do
       to eq({
         "events/#".to_sym => [
           {
-            :klass=>"EventSubscriber"
+            :klass=>"EventSubscriber",
+            :topic=> "events/#"
           }
         ]
       })
@@ -59,10 +71,12 @@ describe 'Muskrat::Subscriber' do
       to eq({
         "events/#".to_sym => [
           {
-            :klass=>"EventSubscriber"
+            :klass=>"EventSubscriber",
+            :topic=> "events/#"
           },
           {
-            :klass=>"SecondaryEventSubscriber"
+            :klass=>"SecondaryEventSubscriber",
+            :topic=> "events/#"
           }
         ]
       })
@@ -83,17 +97,20 @@ describe 'Muskrat::Subscriber' do
       to eq({
         "events/#".to_sym => [
           {
-            :klass => "MultiSubscriber"
+            :klass => "MultiSubscriber",
+            :topic=> "events/#"
           }
         ],
         :notifications => [
           {
-            :klass => "MultiSubscriber"
+            :klass => "MultiSubscriber",
+            :topic=> "notifications"
           }
         ],
         :alarms => [
           {
-            :klass => "MultiSubscriber"
+            :klass => "MultiSubscriber",
+            :topic=> "alarms"
           }
         ]
       })
