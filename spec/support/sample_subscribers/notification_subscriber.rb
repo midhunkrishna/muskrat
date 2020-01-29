@@ -3,7 +3,7 @@ require 'muskrat'
 class NotificationSubscriber
   include Muskrat::Subscriber
 
-  subscribe topic: "notifications"
+  subscribe topic: "notifications", retain: true
 
   def perform
     # no-op

@@ -17,6 +17,10 @@ module Muskrat
       load_environment
     end
 
+    def env_str
+      @options[:environment] || ENV["RAILS_ENV"]|| ENV["RACK_ENV"]
+    end
+
     private
 
     def set_execution_env(env_str)

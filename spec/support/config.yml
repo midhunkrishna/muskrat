@@ -7,9 +7,9 @@
   - :name: "heartbeat/#"
     :ratio: 10
   :mqtt:
-    - :host: localhost
-      :port: 1833
-      :ssl: false
-      :cert_file: ''
-      :key_file: ''
-      :ca_file: ''
+    :host: localhost
+    :port: 1833
+    :ssl: false
+    :cert_file: ''
+    :key_file: ''
+    :ca_file: ''
