@@ -17,13 +17,15 @@ describe 'Muskrat::CLI' do
     end
 
     it 'configures file/dir that needs to be required, -R [PATH|FILE]' do
-      expect(Muskrat::Logger).to receive(:log).with(Muskrat::Configurer::CONFIG_FILE_NOT_FOUND)
+      expect(Muskrat::Logger)
+        .to receive(:log).with(Muskrat::Configuration::Loader::CONFIG_FILE_NOT_FOUND)
       subject.parse(['-R', 'rails_root'])
       expect(Muskrat.options).to include({require: 'rails_root'})
     end
 
     it 'configures environment string, -e [STR]' do
-      expect(Muskrat::Logger).to receive(:log).with(Muskrat::Configurer::CONFIG_FILE_NOT_FOUND)
+      expect(Muskrat::Logger)
+        .to receive(:log).with(Muskrat::Configuration::Loader::CONFIG_FILE_NOT_FOUND)
       subject.parse(['-e', 'staging'])
       expect(Muskrat.options).to include({environment: 'staging'})
     end

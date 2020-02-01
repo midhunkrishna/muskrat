@@ -1,14 +1,13 @@
-require 'muskrat'
-require 'muskrat/configurer'
-require 'muskrat/env'
+require "muskrat"
+require "muskrat/configuration"
+require "muskrat/env"
 
 module Muskrat
   class CLI
-    def parse(args=ARGV)
+    def parse(args = ARGV)
       populate_options(args)
-      @env = load_requireable_env
+      load_requireable_env
     end
-
 
     private
 
@@ -19,14 +18,12 @@ module Muskrat
       Muskrat.options
     end
 
-    def populate_options(args)
-      options.merge!(Muskrat::Configurer.parse_from_cli(args))
+    def load_requireable_env
+      Muskrat.env
     end
 
-    def load_requireable_env
-      env = Muskrat::Env.new(options)
-      env.load
-      env
+    def populate_options(args)
+      options.merge!(Muskrat::Configuration.parse_from_cli(args))
     end
   end
 end

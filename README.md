@@ -6,6 +6,8 @@ Under Active Development :rocket:
 
 [![CircleCi](https://circleci.com/gh/midhunkrishna/muskrat.svg?style=svg)](https://circleci.com/gh/midhunkrishna/muskrat)
 
+[![Gem Version](https://badge.fury.io/rb/Muskrat.svg)](https://badge.fury.io/rb/Muskrat)
+
 ## Installation
 
 Add this line to your application's Gemfile:

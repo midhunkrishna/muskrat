@@ -1,9 +1,9 @@
-require 'muskrat/rails_reloader'
+require "muskrat/rails_reloader"
 
 module Muskrat
   class Env
-    DEVELOPMENT='development'.freeze
-    RAILS_VERSION_NOT_SUPPORTED='Muskrat only supports Rails version 5 or above.'.freeze
+    DEVELOPMENT = "development".freeze
+    RAILS_VERSION_NOT_SUPPORTED = "Muskrat only supports Rails version 5 or above.".freeze
 
     attr_reader :options
 
@@ -17,26 +17,32 @@ module Muskrat
       load_environment
     end
 
+    def env_str
+      @options[:environment] || ENV["RAILS_ENV"]|| ENV["RACK_ENV"]
+    end
 
     private
 
     def set_execution_env(env_str)
-      ENV['RAILS_ENV'] = ENV['RACK_ENV'] = env_str if env_str
+      ENV["RAILS_ENV"] = ENV["RACK_ENV"] = env_str if env_str
     end
 
     def load_environment
+      return unless @path
+
       if File.directory?(@path)
         require "rails"
         if ::Rails::VERSION::MAJOR < 5
           raise RAILS_VERSION_NOT_SUPPORTED
         else
-          require ::File.expand_path('config/environment', @path)
+          require ::File.expand_path("config/environment", @path)
           require "muskrat/rails_reloader"
 
           options[:reloader] = Muskrat::RailsReloader.new(::Rails.application)
         end
+
       else
-        require "#{@path}"
+        require @path.to_s
       end
     end
 
