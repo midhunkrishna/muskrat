@@ -9,10 +9,9 @@ module HashRefinements
 
     def except(keys)
       self.inject({}) do |acc, (key, _)|
-        unless keys.include?(k.to_sym) || keys.include?(k.to_s)
-          acc[key] = hash[k]
+        unless keys.include?(key.to_sym) || keys.include?(key.to_s)
+          acc[key] = self[key]
         end
-
         acc
       end
     end

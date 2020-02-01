@@ -1,5 +1,5 @@
 require "muskrat"
-require "muskrat/configurer"
+require "muskrat/configuration"
 require "muskrat/env"
 
 module Muskrat
@@ -23,7 +23,7 @@ module Muskrat
     end
 
     def populate_options(args)
-      options.merge!(Muskrat::Configurer.parse_from_cli(args))
+      options.merge!(Muskrat::Configuration.parse_from_cli(args))
     end
   end
 end

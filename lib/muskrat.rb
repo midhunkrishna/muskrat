@@ -1,8 +1,11 @@
 require 'muskrat/version'
-require 'muskrat/subscriber'
-require 'muskrat/configurer'
+require 'muskrat/configuration'
 require 'muskrat/env'
 require 'muskrat/mqtt'
+
+require 'muskrat/subscriber'
+require 'muskrat/publisher'
+
 
 module Muskrat
   DEFAULTS = {
@@ -23,7 +26,7 @@ module Muskrat
   end
 
   def self.configure &blk
-    configurer = Muskrat::Configurer.new(options)
+    configurer = Muskrat::Configuration::Loader.new(options)
     blk.call(configurer)
   end
 end

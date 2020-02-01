@@ -6,8 +6,7 @@ module Muskrat
       begin
         client = Muskrat::Mqtt::Client.new
         client.connect
-        block.call(client)
-
+        blk.call(client)
       ensure
         client.disconnect
       end

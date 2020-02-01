@@ -28,6 +28,8 @@ module Muskrat
     end
 
     def load_environment
+      return unless @path
+
       if File.directory?(@path)
         require "rails"
         if ::Rails::VERSION::MAJOR < 5
@@ -38,6 +40,7 @@ module Muskrat
 
           options[:reloader] = Muskrat::RailsReloader.new(::Rails.application)
         end
+
       else
         require @path.to_s
       end

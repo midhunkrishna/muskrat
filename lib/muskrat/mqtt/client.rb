@@ -1,3 +1,4 @@
+require 'mqtt'
 require "muskrat/refinements/hash_refinements"
 
 using HashRefinements
@@ -11,14 +12,14 @@ module Muskrat
         # TODO
         # Client to not start read thread in future
 
-        @client = MQTT::Client.new(connection_config.except(MANUAL_ATTRS))
+        @client = ::MQTT::Client.new(connection_config.except(MANUAL_ATTRS))
         MANUAL_ATTRS.each do |attr|
           @client.send(attr, connection_config[attr]) if connection_config[attr]
         end
       end
 
-      def publish(topic, args, retain=false)
-        @client.publish(topic, args, retain)
+      def publish(topic, data, retain=false)
+        @client.publish(topic, data, retain)
       end
 
       def connect
@@ -32,7 +33,8 @@ module Muskrat
       private
 
       def connection_config
-        Muskrat.options[:config]&.[](Muskrat.env.env_str)&.[](:mqtt) || {
+        env_str = Muskrat.env.env_str.to_sym
+        Muskrat.options[:config]&.[](env_str)&.[](:mqtt) || {
           host: 'localhost'
         }
       end

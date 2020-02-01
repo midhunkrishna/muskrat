@@ -1,6 +1,5 @@
 require_relative 'spec_helper'
 require 'muskrat/subscriber'
-require 'pry-byebug'
 
 describe 'Muskrat::Subscriber' do
   before(:each) do
@@ -19,15 +18,6 @@ describe 'Muskrat::Subscriber' do
   def recorded_require(path_partial)
     @require_stack.push(path_partial)
     require_relative "./support/#{path_partial}"
-  end
-
-  describe ".publish" do
-    Muskrat.configure do |config|
-      config.config_file = File.join(File.expand_path('../', __FILE__), 'support/config.yml')
-    end
-
-    # TODO
-    # implement configurer guard first
   end
 
   describe ".subscribe" do
@@ -102,7 +92,6 @@ describe 'Muskrat::Subscriber' do
 
     it 'can configure multiple subscriptions' do
       recorded_require 'sample_subscribers/multi_subscriber'
-
       expect(Muskrat.options[:subscriber_config]).
         to eq({
           "events/#".to_sym => [

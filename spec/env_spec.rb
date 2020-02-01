@@ -1,4 +1,3 @@
-require 'pry-byebug'
 require_relative 'spec_helper'
 
 require 'muskrat/env'
