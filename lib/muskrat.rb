@@ -18,6 +18,10 @@ module Muskrat
   end
 
   def self.env
+    ##
+    # TODO:
+    # Log information that Rails env is booted.
+
     @env ||= begin
                env = Muskrat::Env.new(self.options)
                env.load

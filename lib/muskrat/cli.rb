@@ -1,5 +1,6 @@
 require "muskrat"
 require "muskrat/configuration"
+require "muskrat/launcher"
 require "muskrat/env"
 
 module Muskrat
@@ -9,9 +10,17 @@ module Muskrat
       load_requireable_env
     end
 
+    def launch
+      @launcher = Muskrat::Launcher.new(options)
+      @launcher.run
+    end
+
+
     private
 
-    def launch
+    def stop
+      # @launcher.slow_down
+      # @launcher.terminate
     end
 
     def options

@@ -2,6 +2,12 @@ require_relative 'spec_helper'
 require 'muskrat/subscriber'
 
 describe 'Muskrat::Subscriber' do
+  before(:all) do
+    ($LOADED_FEATURES.grep /sample_subscribers/).each do |path|
+      $LOADED_FEATURES.delete(path)
+    end
+  end
+
   before(:each) do
     @require_stack = []
     @muskrat_options = Muskrat.options
@@ -23,6 +29,7 @@ describe 'Muskrat::Subscriber' do
   describe ".subscribe" do
     it 'sets subscription information in :subscriber_config' do
       recorded_require 'sample_subscribers/notification_subscriber'
+
       expect(Muskrat.options[:subscriber_config]).
         to eq(
           {

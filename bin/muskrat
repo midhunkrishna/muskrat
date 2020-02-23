@@ -5,6 +5,7 @@ require_relative '../lib/muskrat/cli'
 begin
   cli = Muskrat::CLI.new
   cli.parse
+  cli.launch
 rescue => e
   STDERR.puts e.message
   STDERR.puts e.backtrace.join("\n")
