@@ -1,0 +1,7 @@
+- mqtt client has been patched
+- started reader thread, which reconnects when there is an exception and retries
+- starts threadpool and passes read queue, subscribers and worker count
+
+pending:
+- wireup threadpool and add test coverage and test it manually
+- read sidekiq laucnher test

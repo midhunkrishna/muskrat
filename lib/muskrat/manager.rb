@@ -23,8 +23,7 @@ module Muskrat
         Muskrat::SubscriptionHandler.new(
           channel,
           subscriber_configurations,
-          subscription_configurations(channel),
-          mqtt_configurations
+          worker_count(channel)
         )
       end
     end
@@ -33,12 +32,16 @@ module Muskrat
       @_env_configuration ||= @options[:config][Muskrat.env.env_str.to_sym]
     end
 
-    def subscription_configurations(channel)
-      env_configuration[:subscriptions].detect {|config| config[:name].to_sym == channel }
+    def total_worker_concurrency
+      env_configuration[:concurrency] || @options[:concurrency]
     end
 
-    def mqtt_configurations
-      env_configuration[:mqtt]
+    def worker_count(channel)
+      subscriptions = env_configuration[:subscriptions]
+      total_ratio = subscriptions.map{ | sub | sub[:ratio].to_i }.sum
+      subscription = subscriptions.detect { | sub | sub[:name] == channel }
+
+      (total_worker_concurrency / total_ratio) * subscription[:ratio]
     end
   end
 end

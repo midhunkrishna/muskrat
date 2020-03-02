@@ -30,8 +30,7 @@ describe 'Muskrat::Manager' do
         with(
           :notifications,
           array_including({:klass=> "NotificationSubscriber", :topic=> "notifications"}),
-          {:name=>"notifications", :ratio=>10},
-          {:host=>"localhost", :port=>1883, :ssl=>false, :cert_file=>"", :key_file=>"", :ca_file=>""}
+          5
         )
 
       expect(Muskrat::SubscriptionHandler).
@@ -39,8 +38,7 @@ describe 'Muskrat::Manager' do
         with(
           :"heartbeat/#",
           array_including({:klass=> "HeartbeatSubscriber", :topic=> "heartbeat/#"}),
-          {:name=>"heartbeat/#", :ratio=>10},
-          {:host=>"localhost", :port=>1883, :ssl=>false, :cert_file=>"", :key_file=>"", :ca_file=>""}
+         5
         )
 
       Muskrat::Manager.new(Muskrat.options)

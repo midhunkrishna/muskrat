@@ -1,3 +1,5 @@
+require 'forwardable'
+
 require 'mqtt'
 require "muskrat/refinements/hash_refinements"
 
@@ -8,26 +10,23 @@ module Muskrat
     class Client
       MANUAL_ATTRS=['cert_file', 'cert', 'key_file', 'key', 'ca_file']
 
-      def initialize
-        # TODO
-        # Client to not start read thread in future
+      extend Forwardable
 
+      attr_reader :read_queue
+
+      def_delegators :@client, :connect, :connected?, :disconnect, :subscribe, :receive_packet
+
+      def initialize
         @client = ::MQTT::Client.new(connection_config.except(MANUAL_ATTRS))
         MANUAL_ATTRS.each do |attr|
           @client.send(attr, connection_config[attr]) if connection_config[attr]
         end
+
+        @read_queue = @client.instance_variable_get(:@read_queue)
       end
 
       def publish(topic, data, retain=false)
         @client.publish(topic, data, retain)
-      end
-
-      def connect
-        @client.connect
-      end
-
-      def disconnect
-        @client.disconnect
       end
 
       private
