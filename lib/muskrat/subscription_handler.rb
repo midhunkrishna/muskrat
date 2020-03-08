@@ -13,20 +13,27 @@ module Muskrat
   class SubscriptionHandler
     def initialize(channel, subscribers, worker_count)
       @channel, @subscribers, @worker_count = channel, subscribers, worker_count
-      @_work_queue = Queue.new
+    end
 
+    def start
       subscribe_to_channel
       start_reader
-      start_preprocessor
       start_threadpool
     end
+
 
     private
 
     def subscribe_to_channel
       @_mqtt_client = Muskrat::Mqtt::Client.new(::MQTT::Client)
       @_mqtt_client.connect
-      @_mqtt_client.subscribe(@channel)
+      @_mqtt_client.subscribe(@channel.to_s)
+    end
+
+    def wrap(packet)
+      @subscribers.map do |subscriber|
+        subscriber.merge!(message: packet)
+      end
     end
 
     def start_reader
@@ -34,41 +41,33 @@ module Muskrat
         begin
           loop do
             if @_mqtt_client.connected?
-              @_mqtt_client.receive_packet
+              @_mqtt_client.receive_packet do | packet |
+                wrap(packet)
+                @_mqtt_client.puback_packet(packet) if packet.qos > 0
+              end
             else
               raise Muskrat::Mqtt::ConnectionClosed
             end
           end
         rescue
-          connect_mqtt unless @_mqtt_client.connected?
+          @_mqtt_client.connect unless @_mqtt_client.connected?
           ##
+          # TODO:
           # Report exception / logger
           retry
         end
       end
     end
 
-    def wrap(message)
-      @subscribers.map do |subscriber|
-        subscriber.merge!(message: message)
-      end
-    end
-
-    def start_preprocessor
-      @_preprocessor = Thread.new do
-        loop do
-          message = @_mqtt_client.read_queue.pop
-          @_work_queue.push(*wrap(message))
-        end
-      end
-    end
-
     def start_threadpool
+      ##
+      # TODO:
+      # Load into read queue, persisted data on last shutdown
+      # Clear existing data in storage
+
       @_threadpool = Muskrat::Threadpool.new(
-        @_work_queue,
-        @subscribers,
         @worker_count,
-        -> (packet) { @_mqtt_client.puback_packet(packet) if packet.qos > 0 }
+        @_mqtt_client.read_queue
       )
     end
   end

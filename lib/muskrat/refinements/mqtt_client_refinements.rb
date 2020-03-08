@@ -2,14 +2,29 @@ require 'mqtt'
 
 module MqttClientRefinements
   refine ::MQTT::Client do
-    def receive_packet
+    def handle_packet(packet, block)
+      if packet.class == MQTT::Packet::Publish
+        # Add to queue
+        @read_queue.push(*block.call(packet))
+      elsif packet.class == MQTT::Packet::Pingresp
+        @last_ping_response = Time.now
+      elsif packet.class == MQTT::Packet::Puback
+        @pubacks_semaphore.synchronize do
+          @pubacks[packet.id] = packet
+        end
+      end
+      # Ignore all other packets
+      # FIXME: implement responses for QoS  2
+    end
+
+    def receive_packet &block
       begin
         # Poll socket - is there data waiting?
         result = IO.select([@socket], [], [], SELECT_TIMEOUT)
         unless result.nil?
           # Yes - read in the packet
           packet = MQTT::Packet.read(@socket)
-          handle_packet packet
+          handle_packet(packet, block)
         end
         keep_alive!
         # Pass exceptions up to parent thread

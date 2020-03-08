@@ -19,7 +19,6 @@ module Muskrat
     private
 
     def stop
-      # @launcher.slow_down
       # @launcher.terminate
     end
 

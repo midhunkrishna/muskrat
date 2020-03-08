@@ -16,8 +16,8 @@ module Muskrat
 
       def_delegators :@client, :connect, :connected?, :disconnect, :subscribe, :receive_packet
 
-      def initialize
-        @client = ::MQTT::Client.new(connection_config.except(MANUAL_ATTRS))
+      def initialize(client_class = ::MQTT::Client)
+        @client = client_class.new(connection_config.except(MANUAL_ATTRS))
         MANUAL_ATTRS.each do |attr|
           @client.send(attr, connection_config[attr]) if connection_config[attr]
         end

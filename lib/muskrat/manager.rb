@@ -3,16 +3,19 @@ require 'muskrat/subscription_handler'
 
 module Muskrat
   class Manager
+    ON_SINGLE_THREAD = 1
+
+    attr_reader :handlers
+
     def initialize(options)
       @options = options
       @handlers = subscription_handlers
-      # subscription_handlers
-      #
     end
 
     def run
-      # call start on subscription handlers
+      @handlers.map(&:start)
     end
+
 
     private
 
@@ -38,10 +41,35 @@ module Muskrat
 
     def worker_count(channel)
       subscriptions = env_configuration[:subscriptions]
-      total_ratio = subscriptions.map{ | sub | sub[:ratio].to_i }.sum
-      subscription = subscriptions.detect { | sub | sub[:name] == channel }
+      total_ratio = subscriptions.map{ | sub | sub[:ratio] || total_worker_concurrency}.sum
 
-      (total_worker_concurrency / total_ratio) * subscription[:ratio]
+      subscription = subscriptions.detect do | sub |
+        sub[:name] == channel || sub[:name] == channel.to_s
+      end
+
+      if subscription
+        ((total_worker_concurrency / total_ratio.to_f) * subscription[:ratio]).to_i
+      else
+        ##
+        # TODO:
+        # Log warning ON_SINGLE_THREAD
+        ON_SINGLE_THREAD
+      end
     end
   end
 end
+
+
+=begin
+require 'muskrat'
+require 'muskrat/manager'
+require_relative './spec/support/sample_subscribers/notification_subscriber'
+config_file_path = File.join(File.expand_path('../spec', __FILE__), 'support/config.yml')
+configurer = Muskrat::Configuration::Loader.new(Muskrat.options)
+configurer.config_file = config_file_path
+
+puts Muskrat.options
+ENV['RAILS_ENV'] = 'production'
+
+Muskrat::Manager.new(Muskrat.options)
+=end

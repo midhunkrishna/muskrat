@@ -23,7 +23,7 @@ describe 'Muskrat::Manager' do
     allow(Muskrat.env).to receive(:env_str).and_return('production')
   end
 
-  describe '.new' do
+  describe 'initialize' do
     it 'instantiates and collects subscription handler classes' do
       expect(Muskrat::SubscriptionHandler).
         to receive(:new).
@@ -42,6 +42,29 @@ describe 'Muskrat::Manager' do
         )
 
       Muskrat::Manager.new(Muskrat.options)
+    end
+
+    it 'assigns a single worker to a channel if config doesnt specify one' do
+      require_relative "./support/sample_subscribers/multi_subscriber"
+      handlers = Muskrat::Manager.new(Muskrat.options).handlers
+      events_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "events/#".to_sym }
+      alarms_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "alarms".to_sym }
+
+      expect(events_handler.instance_variable_get(:@worker_count)).to eq 1
+      expect(alarms_handler.instance_variable_get(:@worker_count)).to eq 1
+    end
+  end
+
+  describe '#run' do
+    it 'calls start on all subscription handlers' do
+      # expect_any_instance_of(Muskrat::SubscriptionHandler).to receive(:start).twice
+      manager = Muskrat::Manager.new(Muskrat.options)
+
+      manager.handlers.each do |handler|
+        expect(handler).to receive(:start)
+      end
+
+      manager.run
     end
   end
 end
