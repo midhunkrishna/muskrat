@@ -1,7 +1,8 @@
 require 'muskrat'
-require 'muskrat/mqtt/client'
-require 'muskrat/refinements/mqtt_client_refinements'
+
+require 'muskrat/mqtt'
 require 'muskrat/threadpool'
+require 'muskrat/refinements/mqtt_client_refinements'
 
 using MqttClientRefinements
 
@@ -36,25 +37,35 @@ module Muskrat
       end
     end
 
-    def start_reader
+    def read_from_mqtt
+      if @_mqtt_client.connected?
+        @_mqtt_client.receive_packet do | packet |
+          @_mqtt_client.puback_packet(packet) if packet.qos > 0
+          wrap(packet)
+        end
+      else
+        raise Muskrat::Mqtt::ConnectionClosed
+      end
+    end
+
+    def with_reader_thread &block
       @_reader = Thread.new do
+        loop do
+          block.call
+        end
+      end
+    end
+
+    def start_reader
+      with_reader_thread do
         begin
-          loop do
-            if @_mqtt_client.connected?
-              @_mqtt_client.receive_packet do | packet |
-                wrap(packet)
-                @_mqtt_client.puback_packet(packet) if packet.qos > 0
-              end
-            else
-              raise Muskrat::Mqtt::ConnectionClosed
-            end
-          end
+          read_from_mqtt
         rescue
           @_mqtt_client.connect unless @_mqtt_client.connected?
           ##
           # TODO:
           # Report exception / logger
-          retry
+          # Timed retry
         end
       end
     end
@@ -62,13 +73,15 @@ module Muskrat
     def start_threadpool
       ##
       # TODO:
-      # Load into read queue, persisted data on last shutdown
+      # Persisted data on last shutdown should be loaded into read queue
       # Clear existing data in storage
 
       @_threadpool = Muskrat::Threadpool.new(
         @worker_count,
         @_mqtt_client.read_queue
       )
+
+      @_threadpool.start
     end
   end
 end

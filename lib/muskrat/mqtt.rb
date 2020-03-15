@@ -1,4 +1,5 @@
 require_relative './mqtt/client'
+require_relative './mqtt/connection_closed'
 
 module Muskrat
   module Mqtt

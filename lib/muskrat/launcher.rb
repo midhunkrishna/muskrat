@@ -11,7 +11,7 @@ module Muskrat
       ##
       # TODO:
       # From here on, muskrat is multi threaded, log the information
-      manager.run
+      @manager.run
     end
   end
 end
