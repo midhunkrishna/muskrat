@@ -2,6 +2,8 @@ require "muskrat"
 require "muskrat/configuration"
 require "muskrat/refinements/hash_refinements"
 
+require 'pry-byebug'
+
 using HashRefinements
 
 module Muskrat

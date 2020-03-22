@@ -9,6 +9,10 @@ describe 'Muskrat::Env' do
     Muskrat.instance_variable_set(:@options, Muskrat::DEFAULTS)
   end
 
+  after(:all) do
+    ENV['RAILS_ENV'] = ENV['RACK_ENV'] = nil
+  end
+
   after(:each) do
     Muskrat.instance_variable_set(:@options, @muskrat_options)
   end

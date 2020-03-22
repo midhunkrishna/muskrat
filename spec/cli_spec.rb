@@ -6,9 +6,21 @@ describe 'Muskrat::CLI' do
   let(:rails_root) { './spec/support/rails_dummy' }
   subject { Muskrat::CLI.new }
 
-  describe 'parse' do
+  after(:all) do
+    Muskrat.instance_variable_set(:@options, Muskrat::DEFAULTS.dup)
+  end
+
+  describe '.launch' do
+    it 'starts launcher' do
+      expect_any_instance_of(Muskrat::Launcher).to receive(:run)
+      subject.launch
+    end
+  end
+
+  describe 'populate_options' do
     before :each do
       allow_any_instance_of(Muskrat::Env).to receive(:load)
+      allow_any_instance_of(Muskrat::Launcher).to receive(:run)
     end
 
     it 'configures yml file to load, -C [PATH]' do
