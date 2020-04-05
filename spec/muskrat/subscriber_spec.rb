@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 require 'muskrat/subscriber'
 
 describe 'Muskrat::Subscriber' do
@@ -23,7 +23,7 @@ describe 'Muskrat::Subscriber' do
 
   def recorded_require(path_partial)
     @require_stack.push(path_partial)
-    require_relative "./support/#{path_partial}"
+    require_relative "../support/#{path_partial}"
   end
 
   describe ".subscribe" do

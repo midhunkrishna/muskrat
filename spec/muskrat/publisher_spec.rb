@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 require 'muskrat/publisher'
 
 describe 'Muskrat::Publisher' do
@@ -14,7 +14,7 @@ describe 'Muskrat::Publisher' do
 
   def recorded_require(path_partial)
     @require_stack.push(path_partial)
-    require_relative "./support/#{path_partial}"
+    require_relative "../support/#{path_partial}"
   end
 
   describe '.publish' do

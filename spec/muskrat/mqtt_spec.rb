@@ -1,3 +1,5 @@
+require_relative '../spec_helper'
+
 require 'muskrat/mqtt'
 
 describe 'Muskrat::Mqtt' do

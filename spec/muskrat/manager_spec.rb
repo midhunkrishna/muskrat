@@ -5,12 +5,12 @@ require 'pry-byebug'
 
 describe 'Muskrat::Manager' do
   before :all do
-    config_file_path = File.join(File.expand_path('../', __FILE__), 'support/config.yml')
+    config_file_path = File.join(File.expand_path('../../', __FILE__), 'support/config.yml')
     configurer = Muskrat::Configuration::Loader.new(Muskrat.options)
     configurer.config_file = config_file_path
 
-    require_relative "./support/sample_subscribers/notification_subscriber"
-    require_relative "./support/sample_subscribers/heartbeart_subscriber"
+    require_relative "../support/sample_subscribers/notification_subscriber"
+    require_relative "../support/sample_subscribers/heartbeart_subscriber"
   end
 
   after(:all) do
@@ -45,7 +45,7 @@ describe 'Muskrat::Manager' do
     end
 
     it 'assigns a single worker to a channel if config doesnt specify one' do
-      require_relative "./support/sample_subscribers/multi_subscriber"
+      require_relative "../support/sample_subscribers/multi_subscriber"
       handlers = Muskrat::Manager.new(Muskrat.options).handlers
       events_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "events/#".to_sym }
       alarms_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "alarms".to_sym }

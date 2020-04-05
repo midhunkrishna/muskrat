@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 require 'muskrat'
 require 'muskrat/configuration'
 
@@ -92,7 +92,7 @@ describe 'Muskrat::Configuration::Guard' do
     end
 
     it 'verifies that the configuration is correct' do
-      config_path =  File.join(File.expand_path('../../', __FILE__), 'support/config.yml')
+      config_path =  File.join(File.expand_path('../../../', __FILE__), 'support/config.yml')
       expect {
         subject(YAML.load(File.read(config_path)))
       }.not_to raise_error

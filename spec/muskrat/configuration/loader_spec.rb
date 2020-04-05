@@ -1,10 +1,10 @@
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 require 'muskrat'
 require 'muskrat/configuration'
 
 describe 'Muskrat::Configuration::Loader' do
   before(:each) do
-    @config_file_path = File.join(File.expand_path('../../', __FILE__), 'support/config.yml')
+    @config_file_path = File.join(File.expand_path('../../../', __FILE__), 'support/config.yml')
     @muskrat_options = Muskrat.options
     Muskrat.instance_variable_set(:@options, Muskrat::DEFAULTS.dup)
   end
