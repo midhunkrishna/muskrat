@@ -1,7 +1,6 @@
 require "muskrat"
 require "muskrat/configuration"
 require "muskrat/mqtt"
-require "muskrat/refinements/hash_refinements"
 
 module Muskrat
   class Publisher

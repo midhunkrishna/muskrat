@@ -1,10 +1,7 @@
 require "muskrat"
 require "muskrat/configuration"
-require "muskrat/refinements/hash_refinements"
-
-require 'pry-byebug'
-
-using HashRefinements
+require_relative '../refinements/refined_hash'
+using RefinedHash
 
 module Muskrat
   module Subscriber

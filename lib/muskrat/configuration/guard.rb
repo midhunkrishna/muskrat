@@ -1,6 +1,6 @@
-require 'muskrat/refinements/hash_refinements'
+require_relative '../../refinements/refined_hash'
 
-using HashRefinements
+using RefinedHash
 
 module Muskrat
   module Configuration

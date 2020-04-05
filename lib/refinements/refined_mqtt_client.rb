@@ -1,6 +1,6 @@
 require 'mqtt'
 
-module MqttClientRefinements
+module RefinedMqttClient
   refine ::MQTT::Client do
     def handle_packet(packet, block)
       if packet.class == MQTT::Packet::Publish

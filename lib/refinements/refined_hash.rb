@@ -1,4 +1,4 @@
-module HashRefinements
+module RefinedHash
   refine Hash do
     def symbolize_keys
       self.inject({}) do |acc, (key, value)|

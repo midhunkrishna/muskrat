@@ -2,13 +2,9 @@ require 'muskrat'
 
 require 'muskrat/mqtt'
 require 'muskrat/threadpool'
-require 'muskrat/refinements/mqtt_client_refinements'
+require_relative '../refinements/refined_mqtt_client'
 
-using MqttClientRefinements
-
-# @_mqtt_client
-# @_reader
-# @_pool
+using RefinedMqttClient
 
 module Muskrat
   class SubscriptionHandler
