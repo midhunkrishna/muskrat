@@ -1,0 +1,13 @@
+---
+:development:
+  :concurrency: 10
+  :subscriptions:
+  - :name: 'ping-pong' #channel-name
+    :ratio: 10
+  :mqtt:
+    :host: localhost
+    :port: 1883
+    :ssl: false
+    :cert_file: ''
+    :key_file: ''
+    :ca_file: ''

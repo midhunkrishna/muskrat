@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "muskrat/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "Muskrat"
+  spec.name          = "muskrat"
   spec.version       = Muskrat::VERSION
   spec.authors       = ["Midhun Krishna"]
   spec.email         = ["reachme@midhunkrishna.in"]

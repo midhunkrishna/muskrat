@@ -21,6 +21,10 @@ module Muskrat
         @options
       end
 
+      def env=(env_str)
+        @options[:environment] = env_str
+      end
+
       private
 
       def parse_options(args)
