@@ -5,6 +5,7 @@ require 'muskrat/mqtt'
 
 require 'muskrat/subscriber'
 require 'muskrat/publisher'
+require 'json'
 
 
 module Muskrat
@@ -24,7 +25,7 @@ module Muskrat
 
     @env ||= begin
                env = Muskrat::Env.new(self.options)
-               env.load
+               env.load_application
                env
              end
   end
@@ -32,5 +33,13 @@ module Muskrat
   def self.configure &blk
     configurer = Muskrat::Configuration::Loader.new(options)
     blk.call(configurer)
+  end
+
+  def self.load_json(string)
+    JSON.parse(string)
+  end
+
+  def self.dump_json(object)
+    JSON.generate(object)
   end
 end

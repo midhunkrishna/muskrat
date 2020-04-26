@@ -85,11 +85,11 @@ describe Muskrat::SubscriptionHandler do
       end
 
       it 'wraps the received packet for as many subscribers there is' do
-        packet =  OpenStruct.new(data: {})
+        packet =  OpenStruct.new(payload: Muskrat.dump_json({name: 'jameson'}))
         wrapped_data = @handler.send(:wrap, packet).last
         expect(wrapped_data[:klass]).to eq "NotificationSubscriber"
         expect(wrapped_data[:topic]).to eq "notifications"
-        expect(wrapped_data[:message]).to eq packet
+        expect(wrapped_data[:message]).to eq({"name"=>"jameson"})
       end
     end
 

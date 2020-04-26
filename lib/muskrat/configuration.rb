@@ -15,7 +15,7 @@ module Muskrat
 
     def self.reconcile_subscription(opts, subscription)
       topics = Array(subscription[:topic]).map(&:to_sym)
-      config = opts[:subscriber_config].dup || {}
+      config = opts[:subscriber_config]&.dup || {}
       topics.each do |topic|
         config[topic] ||= []
 

@@ -2,7 +2,6 @@ require "muskrat/rails_reloader"
 
 module Muskrat
   class Env
-    DEVELOPMENT = "development".freeze
     RAILS_VERSION_NOT_SUPPORTED = "Muskrat only supports Rails version 5 or above.".freeze
 
     attr_reader :options
@@ -13,7 +12,7 @@ module Muskrat
       @path = options[:require] || gather_from_fs
     end
 
-    def load
+    def load_application
       load_environment
     end
 
@@ -32,6 +31,7 @@ module Muskrat
 
       if File.directory?(@path)
         require "rails"
+
         if ::Rails::VERSION::MAJOR < 5
           raise RAILS_VERSION_NOT_SUPPORTED
         else
@@ -39,11 +39,39 @@ module Muskrat
           require "muskrat/rails_reloader"
 
           options[:reloader] = Muskrat::RailsReloader.new(::Rails.application)
+          eager_load!
         end
-
       else
         require @path.to_s
       end
+    end
+
+    def eager_load!
+      if defined? Zeitwerk
+        begin
+          Zeitwerk::Loader.eager_load_all
+          return
+        rescue NameError => e
+          ##
+          # TODO:
+          # Log information that Zeitwerk loader failed
+          puts e.message
+          puts e.backtrace
+          puts "Fallback chain loader"
+        end
+      end
+
+      eager_load_paths.each do | path |
+        load_path = path.to_s
+        matcher = /\A#{Regexp.escape(load_path)}\/(.*)\.rb\Z/
+        Dir.glob("#{load_path}/**/*.rb").sort.each do |file|
+          require_dependency file.sub(matcher, '\1')
+        end
+      end
+    end
+
+    def eager_load_paths
+      ::Rails.configuration.eager_load_paths || []
     end
 
     def gather_from_fs

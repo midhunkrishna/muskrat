@@ -1,6 +1,7 @@
 require 'forwardable'
 
 require 'mqtt'
+require_relative '../core_ext/mqtt_client'
 require_relative '../../refinements/refined_hash'
 
 using RefinedHash
@@ -16,7 +17,7 @@ module Muskrat
 
       def_delegators :@client, :connect, :connected?, :disconnect, :subscribe, :receive_packet
 
-      def initialize(client_class = ::MQTT::Client)
+      def initialize(client_class = Muskrat::CoreExt::MqttClient)
         @client = client_class.new(connection_config.except(MANUAL_ATTRS))
         MANUAL_ATTRS.each do |attr|
           @client.send(attr, connection_config[attr]) if connection_config[attr]

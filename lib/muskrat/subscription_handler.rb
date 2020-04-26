@@ -2,17 +2,21 @@ require 'muskrat'
 
 require 'muskrat/mqtt'
 require 'muskrat/threadpool'
-require_relative '../refinements/refined_mqtt_client'
 
-using RefinedMqttClient
 
 module Muskrat
   class SubscriptionHandler
+
     def initialize(channel, subscribers, worker_count)
-      @channel, @subscribers, @worker_count = channel, subscribers, worker_count
+      @channel, @subscribers, @worker_count = channel.to_s, subscribers, worker_count
     end
 
     def start
+      ###
+      # TODO:
+      #
+      puts "#{@worker_count} workers starting for channel #{@channel}"
+
       subscribe_to_channel
       start_reader
       start_threadpool
@@ -22,14 +26,17 @@ module Muskrat
     private
 
     def subscribe_to_channel
-      @_mqtt_client = Muskrat::Mqtt::Client.new(::MQTT::Client)
+      @_mqtt_client = Muskrat::Mqtt::Client.new
       @_mqtt_client.connect
-      @_mqtt_client.subscribe(@channel.to_s)
+      @_mqtt_client.subscribe(@channel)
     end
 
     def wrap(packet)
       @subscribers.map do |subscriber|
-        subscriber.merge!(message: packet)
+        subscriber.merge!(
+          message: Muskrat.load_json(packet.payload),
+          _ref: packet,
+        )
       end
     end
 

@@ -47,8 +47,9 @@ describe 'Muskrat::Manager' do
     it 'assigns a single worker to a channel if config doesnt specify one' do
       require_relative "../support/sample_subscribers/multi_subscriber"
       handlers = Muskrat::Manager.new(Muskrat.options).handlers
-      events_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "events/#".to_sym }
-      alarms_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "alarms".to_sym }
+
+      events_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "events/#" }
+      alarms_handler = handlers.detect { |h| h.instance_variable_get(:@channel) == "alarms" }
 
       expect(events_handler.instance_variable_get(:@worker_count)).to eq 1
       expect(alarms_handler.instance_variable_get(:@worker_count)).to eq 1

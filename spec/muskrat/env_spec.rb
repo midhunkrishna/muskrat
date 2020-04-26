@@ -1,5 +1,6 @@
 require_relative '../spec_helper'
 
+require 'muskrat'
 require 'muskrat/env'
 require 'rails'
 
@@ -36,17 +37,34 @@ describe 'Muskrat::Env' do
       env = Muskrat::Env.new({environment: 'staging', require: './spec/support/rails_dummy'})
 
       expect {
-        env.load
+        env.load_application
       }.to raise_exception(RuntimeError, Muskrat::Env::RAILS_VERSION_NOT_SUPPORTED)
     end
 
     it 'loads rails env, when rails version is 5 or greater' do
       env = Muskrat::Env.new({environment: 'staging', require: './spec/support/rails_dummy'})
+      allow(env).to receive(:eager_load_paths).and_return([])
+
       expect(env).to receive(:require).with('rails')
       expect(env).to receive(:require).with(/config\/environment/)
       expect(env).to receive(:require).with('muskrat/rails_reloader')
 
-      env.load
+      env.load_application
+    end
+
+    it 'eager loads eager loadable paths' do
+      env = Muskrat::Env.new({environment: 'staging', require: './spec/support/rails_dummy'})
+      path = File.expand_path('../support/sample_subscribers', __dir__).to_s
+      allow(env).to receive(:eager_load_paths).and_return([path])
+
+      expect(env).to receive(:require).with('rails')
+      expect(env).to receive(:require).with(/config\/environment/)
+      expect(env).to receive(:require).with('muskrat/rails_reloader')
+      expect(env).to receive(:require_dependency).at_most(
+        Dir.glob("#{path}/**/*.rb").count
+      ).times
+
+      env.load_application
     end
   end
 
@@ -54,7 +72,7 @@ describe 'Muskrat::Env' do
     it 'requires the given file' do
       env = Muskrat::Env.new({environment: 'staging', require: 'ruby_main_app_file'})
       expect(env).to receive(:require).with('ruby_main_app_file')
-      env.load
+      env.load_application
     end
   end
 
@@ -65,11 +83,13 @@ describe 'Muskrat::Env' do
         expect(Dir).to receive(:pwd).and_return('./spec/support/rails_dummy')
 
         env = Muskrat::Env.new(Muskrat.options.merge!({environment: 'staging'}))
+        allow(env).to receive(:eager_load_paths).and_return([])
+
         expect(env).to receive(:require).with('rails')
         expect(env).to receive(:require).with(/config\/environment/)
         expect(env).to receive(:require).with('muskrat/rails_reloader').and_call_original
 
-        env.load
+        env.load_application
         expect(Muskrat.options[:reloader]).to be_a Muskrat::RailsReloader
       end
     end
