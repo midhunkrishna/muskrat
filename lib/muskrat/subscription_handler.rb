@@ -63,6 +63,9 @@ module Muskrat
       with_reader_thread do
         begin
           read_from_mqtt
+          ##
+          # TODO:
+          # Handle exceptions gracefully instead of blind rescue
         rescue
           @_mqtt_client.connect unless @_mqtt_client.connected?
           ##
@@ -83,6 +86,11 @@ module Muskrat
         @worker_count,
         @_mqtt_client.read_queue
       )
+
+      ##
+      # TODO:
+      # In case we reinstantiate a mqtt client object,
+      # the mqtt read queue would go out out of scope.
 
       @_threadpool.start
     end
