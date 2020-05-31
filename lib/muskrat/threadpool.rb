@@ -10,6 +10,7 @@ module Muskrat
       @job_queue, @monitor_queue = job_queue, Queue.new
 
       @mutex, @monitor_mutex = Mutex.new, Mutex.new
+      @stop = false
     end
 
     def start
@@ -19,11 +20,17 @@ module Muskrat
       start_monitor
     end
 
+
+
     def shutdown
       ##
       # TODO:
       # Persist current executing thread data
-      # Kill thread
+      Thread.kill(@monitor)
+      @stop = true
+      @pool.each do | thread |
+        Thread.kill(thread)
+      end
     end
 
     private
@@ -53,6 +60,7 @@ module Muskrat
     def with_worker_loop &block
       @pool << Thread.new do
         loop do
+          Thread.stop if @stop
           block.call
         end
       end

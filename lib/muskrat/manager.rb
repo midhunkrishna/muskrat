@@ -16,6 +16,29 @@ module Muskrat
       @handlers.map(&:start)
     end
 
+    def stop
+      ##
+      # TODO:
+      # - Wait for 30 seconds for #stop to return
+      # - Dump job args into storage if thread busy
+      #    and ard kill after 30 seconds
+      @handlers.map(&:stop)
+    end
+
+    def pause
+      ##
+      # TODO:
+      # pause subscription handlers
+      # - workers should pause reading from read queue
+      # - andler should stop reading from socket
+    end
+
+    def resume
+      ##
+      # TODO:
+      # resume normal operation of subscription handlers
+    end
+
 
     private
 
@@ -58,18 +81,3 @@ module Muskrat
     end
   end
 end
-
-
-=begin
-require 'muskrat'
-require 'muskrat/manager'
-require_relative './spec/support/sample_subscribers/notification_subscriber'
-config_file_path = File.join(File.expand_path('../spec', __FILE__), 'support/config.yml')
-configurer = Muskrat::Configuration::Loader.new(Muskrat.options)
-configurer.config_file = config_file_path
-
-puts Muskrat.options
-ENV['RAILS_ENV'] = 'production'
-
-Muskrat::Manager.new(Muskrat.options)
-=end

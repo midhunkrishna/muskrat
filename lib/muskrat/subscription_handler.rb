@@ -22,6 +22,14 @@ module Muskrat
       start_threadpool
     end
 
+    def stop
+      ##
+      # TODO:
+      # - signal threadpool to stop picking new jobs
+      @_mqtt_client.disconnect
+      stop_threadpool
+    end
+
 
     private
 
@@ -30,6 +38,7 @@ module Muskrat
       @_mqtt_client.connect
       @_mqtt_client.subscribe(@channel)
     end
+
 
     def wrap(packet)
       @subscribers.map do |subscriber|
@@ -77,11 +86,6 @@ module Muskrat
     end
 
     def start_threadpool
-      ##
-      # TODO:
-      # Persisted data on last shutdown should be loaded into read queue
-      # Clear existing data in storage
-
       @_threadpool = Muskrat::Threadpool.new(
         @worker_count,
         @_mqtt_client.read_queue
@@ -93,6 +97,10 @@ module Muskrat
       # the mqtt read queue would go out out of scope.
 
       @_threadpool.start
+    end
+
+    def stop_threadpool
+      @_threadpool.shutdown
     end
   end
 end
