@@ -2,6 +2,9 @@
 
 Under Active Development :rocket:
 
+## Lets Chat. 
+
+Please join [muskrat's slack channel](https://join.slack.com/t/muskrat-workspace/shared_invite/zt-ffqrv6l1-mhcnpAsAhFuo1wrLmWuohA) if you have any questions. :)
 ## Ci Status
 
 [![CircleCi](https://circleci.com/gh/midhunkrishna/muskrat.svg?style=svg)](https://circleci.com/gh/midhunkrishna/muskrat)
