@@ -20,17 +20,15 @@ module Muskrat
       start_monitor
     end
 
-
-
     def shutdown
       ##
       # TODO:
       # Persist current executing thread data
-      Thread.kill(@monitor)
-      @stop = true
-      @pool.each do | thread |
-        Thread.kill(thread)
-      end
+      [@monitor, *@pool].map{ |thread| thread.kill.join }
+    end
+
+    def running?
+      @monitor.alive? || @pool.any? { |thread| thread.alive? }
     end
 
     private
@@ -60,7 +58,6 @@ module Muskrat
     def with_worker_loop &block
       @pool << Thread.new do
         loop do
-          Thread.stop if @stop
           block.call
         end
       end

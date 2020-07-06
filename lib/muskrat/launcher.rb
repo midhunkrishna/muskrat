@@ -3,6 +3,7 @@ require 'muskrat/manager'
 
 module Muskrat
   class Launcher
+    SIG_LIST = %w[INT TERM TTIN TSTP CONT]
     def initialize(options)
       @manager = Muskrat::Manager.new(options)
     end
@@ -12,14 +13,16 @@ module Muskrat
       # TODO:
       # From here on, muskrat is multi threaded, log the information
 
+      read_end, = setup_interrupts
+      handle_interrupts(read_end)
+    end
 
-      ###
-      # TODO:
-      # Wait for interrupts and react accordingly
-      # for now, simple bailout with loop
+
+    private
+
+    def setup_interrupts
       read_end, write_end = IO.pipe
-      sig_list = %w[INT TERM TTIN TSTP CONT]
-      sig_list.each do | signal |
+      SIG_LIST.each do |signal|
         trap signal do
           write_end.puts(signal)
         end
@@ -27,37 +30,32 @@ module Muskrat
         puts "Received signal #{signal} not supported"
       end
 
-      handle_interrupts(read_end)
+      [read_end, write_end]
     end
 
-
-    private
-
     def handle_interrupts(read_end)
-      begin
-        @manager.run
+      @manager.run
 
-        while (io = IO.select([read_end]))
-          handler = "handle_#{io.first[0].gets.strip}"
-          if respond_to?(handler)
-            self.private_send(handler)
-          else
-            puts "No handler registered. Ignoring.."
-          end
+      while (io = IO.select([read_end]))
+        handler = "handle_#{io.first[0].gets.strip}"
+        if respond_to?(handler, true)
+          send(handler)
+        else
+          puts 'No handler registered. Ignoring..'
         end
-      rescue Interrupt
-        @manager.stop
-        puts "Bye!"
       end
+    rescue Interrupt
+      @manager.stop
+      puts "Bye!"
     end
 
     def handle_INT
-      puts "Interrupt received, shutting down"
+      puts 'Interrupt received, shutting down'
       raise Interrupt
     end
 
     def handle_TERM
-      puts "Interrupt received, shutting down"
+      puts 'Interrupt received, shutting down'
       raise Interrupt
     end
 

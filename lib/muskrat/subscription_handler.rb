@@ -26,19 +26,22 @@ module Muskrat
       ##
       # TODO:
       # - signal threadpool to stop picking new jobs
-      @_mqtt_client.disconnect
+      disconnect_mqtt_client
       stop_threadpool
     end
 
 
     private
 
+    def disconnect_mqtt_client
+      @_mqtt_client.disconnect if @_mqtt_client.connected?
+    end
+
     def subscribe_to_channel
       @_mqtt_client = Muskrat::Mqtt::Client.new
       @_mqtt_client.connect
       @_mqtt_client.subscribe(@channel)
     end
-
 
     def wrap(packet)
       @subscribers.map do |subscriber|

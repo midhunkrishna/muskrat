@@ -68,4 +68,16 @@ describe 'Muskrat::Manager' do
       manager.run
     end
   end
+
+  describe '#stop' do
+    it 'calls #stop on all subscription handlers' do
+      manager = Muskrat::Manager.new(Muskrat.options)
+
+      manager.handlers.each do |handler|
+        expect(handler).to receive(:stop)
+      end
+
+      manager.run
+    end
+  end
 end
