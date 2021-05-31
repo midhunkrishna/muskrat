@@ -22,10 +22,12 @@ describe Muskrat::Threadpool do
       expect(threadpool.instance_variable_get(:@mutex)).to receive(:synchronize) do | &blk |
         blk.call
       end
+      
       expect(job_queue).to receive(:pop).and_call_original
       expect(Muskrat::JobRunner).to receive(:new).with(job)
 
       threadpool.start
+      threadpool.shutdown
     end
   end
 
@@ -37,6 +39,17 @@ describe Muskrat::Threadpool do
       expect(threadpool).to receive(:with_monitor_loop) { | &blk | blk.call }
       threadpool.instance_variable_set(:@monitor_queue, ['failed_thread'])
       threadpool.start
+    end
+  end
+
+  describe '#shutdown' do
+    subject { Muskrat::Threadpool.new(2, Queue.new) }
+
+    it 'shutsdown the started threadpool' do
+      subject.start
+      subject.shutdown
+      
+      expect(subject).not_to be_running
     end
   end
 end

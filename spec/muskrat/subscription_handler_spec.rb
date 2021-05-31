@@ -25,15 +25,23 @@ describe Muskrat::SubscriptionHandler do
     ENV['RAILS_ENV'] = nil
   end
 
+  describe '#stop' do
+    it 'disconnects mqtt client connection and shuts down threadpool' do
+      expect(@handler).to receive(:disconnect_mqtt_client)
+      expect(@handler).to receive(:stop_threadpool)
+      @handler.stop
+    end
+  end
+
   describe '#start' do
     it 'subscribes to mqtt channel' do
-      allow(handler).to receive(:start_reader)
-      allow(handler).to receive(:start_threadpool)
+      allow(@handler).to receive(:start_reader)
+      allow(@handler).to receive(:start_threadpool)
 
       expect_any_instance_of(Muskrat::Mqtt::Client).to receive(:connect)
       expect_any_instance_of(Muskrat::Mqtt::Client).to receive(:subscribe).with(@channel.to_s)
 
-      handler.start
+      @handler.start
     end
 
     describe 'with reader thread' do

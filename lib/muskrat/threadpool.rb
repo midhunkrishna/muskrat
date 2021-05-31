@@ -10,6 +10,7 @@ module Muskrat
       @job_queue, @monitor_queue = job_queue, Queue.new
 
       @mutex, @monitor_mutex = Mutex.new, Mutex.new
+      @stop = false
     end
 
     def start
@@ -23,7 +24,11 @@ module Muskrat
       ##
       # TODO:
       # Persist current executing thread data
-      # Kill thread
+      [@monitor, *@pool].map{ |thread| thread.kill.join }
+    end
+
+    def running?
+      @monitor.alive? || @pool.any? { |thread| thread.alive? }
     end
 
     private
